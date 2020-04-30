@@ -1,0 +1,4 @@
+사용법
+1) cmd 킨다
+2) 프로젝트 폴더로 이동 ( cd )
+3) 명령어 실행 : browser-sync start --proxy "http://localhost:내가사용하는포트번호" --files "**/*"
