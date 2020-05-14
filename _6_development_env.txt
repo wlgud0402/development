@@ -1,0 +1,46 @@
+1.ec2
+아마존의 새로운 컴퓨터 명칭 ec2(Elastic Compute Cloud)=유동적 >> 인스턴스라고도 부른다
+
+아마존의 ec2를 사용 >> filezila를 사용해서 파일을 옮길때에도 아마존 새로운 ec2의 ip번호를 통해 연결
+연결할 경우에 pem키를 사용해서 해줌(보안키), putty를 사용할때에도 이렇게 해주어야 하지만
+putty에 연결할때에는 putty전용키 ppk키를 만들어줌
+
+파일 실행하고 서비스하는건 예전꺼랑 똑같음 but venv가상환경을 새로운 라이브러리 virtualenv를 pip해서 실행
+
+2.mysql을 위한 ec2 
+내 컴퓨터의 mysql이 아닌 내가 새로 판 ec2의 mysql을 사용해야 한다.
+mysql -uwlgud -p -<내 ec2mysql rds 필요한 주소>
+
+3.RDS
+원래 서비스를 할때에는 실제 동작이 이루어지는 서버를 담당하는 곳과 데이터만을 담당하는 곳 두곳이 필요하다.
+이를 대신해서 아마존(AWS)에서는 다른 동작이나 다른 기능을 인스톨하는것 없이 MYSQL만을 전문적으로 해주는
+데이터베이스를 제공한다. 다른건 안됨 (RDS신청해서 받아놓고 연동해서 사용 안해도 벌금물음)
+
+4. env파일 
+     FLASK_ENV = production이나 development 를 설정해줌
+
+5. env파일 읽기
+     config.py 에서는 os와 load_detenv를 import해서 .env의 파일을 읽어준다
+그 후 os의 환경변수를 key, value의 형태로 저장해서 FLASK_ENV에 할당해줌
+# with open('.env') as f:
+#     for line in f:
+#         if line.startswith('#') or not line.strip():
+#             continue
+#         key, value = line.strip().split('=')
+#         os.environ[key] = value
+
+load_dotenv()	기본적으로 load_dotenv()는 위의 로직과 같은 역할을 한다 .env 파일을 읽어줌
+
+6. env파일 따라서 다른 처리 ( logger )
+	import requests (urllib과 같은 역할을 함 페이지에 요청 보내서 읽어옴)
+	config파일을 읽어서 할당해준 FLASK_ENV를 import함
+	
+def logger(msg)에는 
+FLASK_ENV가 development거나 다른것일시 시행해줄 로직이 들어간다.
+받아오는 msg는 main.py에서 에러가 났을시 어떤 에러가 나오는지 그 메세지가 들어감 ex)list index error
+개발자 모드일시 print(msg)
+아닐시 > log.txt.파일을 append 모드로 encoding=utf-8로 한글 안깨지게 해서 받아오는 msg메세지를 파일에 저장해줌
+
+7. telegram api 사용하기 ( webhook )
+requests.get을 통해 텔레그렘의 api에 요청 > with params { chat_id, text }
+여기서 chat_id 는 텔레그렘이 지정해준 내 고유 id값이 들어가고 text키에는 내가 보내고 싶은 말이 담긴 msg변수를 값으로 할당.
